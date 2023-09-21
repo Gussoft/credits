@@ -21,4 +21,7 @@ public class CreditDetail {
   private BigDecimal interest;
   private BigDecimal sure;
   private BigDecimal total;
+  private LocalDate datePay;
+  private String status;
+
 }

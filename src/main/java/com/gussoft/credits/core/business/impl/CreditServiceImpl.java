@@ -100,6 +100,7 @@ public class CreditServiceImpl implements CreditService {
     return repo.findById(id)
       .flatMap(credit -> {
         credit.setConsume(credit.getConsume().subtract(pay));
+        log.info("Pago Realizado con exito " + pay);
         return repo.save(credit);
       }).map(CreditMapper::toCreditResponse);
   }
@@ -110,7 +111,7 @@ public class CreditServiceImpl implements CreditService {
       .flatMap(credit -> {
           if (credit.getConsume().add(pay).compareTo(credit.getAmount()) <= 0) {
             credit.setConsume(credit.getConsume().add(pay));
-            log.info("Consumo Realizado con exito");
+            log.info("Consumo Realizado con exito " + pay);
             return repo.save(credit);
           }
           return Mono.error(new RuntimeException("Consumo de : " + pay + " Excede el limite de Credito!"));
@@ -191,7 +192,8 @@ public class CreditServiceImpl implements CreditService {
       payment = payment.setScale(2, RoundingMode.HALF_UP);
       monthlyPayment = monthlyPayment.setScale(2, RoundingMode.HALF_UP);
 
-      CreditDetail creditDetail = new CreditDetail(month, paymentDate, payment, interest, insurancePayment, monthlyPayment);
+      CreditDetail creditDetail = new CreditDetail(month, paymentDate, payment, interest,
+        insurancePayment, monthlyPayment, null,"PENDIENTE");
       details.add(creditDetail);
 
       remainingBalance = remainingBalance.subtract(payment);
